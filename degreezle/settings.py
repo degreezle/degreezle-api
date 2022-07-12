@@ -25,14 +25,18 @@ parser.readfp(open(os.path.join(BASE_DIR, 'local.ini')))
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-xk8r4r8lf319$q6e4qnxfw5*v_hkbs76@sm35xw(m)u8)#xk0)'
+SECRET_KEY = parser.get('global', 'secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = parser.get('global', 'debug_mode', fallback=False)
 
 ALLOWED_HOSTS = ['*']
 
 # Application definition
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'api.utils.api_exception_handler'
+}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -73,6 +77,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'degreezle.wsgi.application'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
 
 
 # Database
@@ -122,6 +141,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+CACHE_TIMEOUT_IN_SECONDS = 60 * 60 * 24
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -134,3 +154,10 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TMDB_API_KEY = parser.get('global', 'tmdb_api_key')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache',
+    }
+}
