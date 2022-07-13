@@ -10,31 +10,79 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
+from api.serializers import CastMemberSerializer, MovieCreditSerializer
 from degreezle.settings import CACHE_TIMEOUT_IN_SECONDS
 
 logger = logging.getLogger(__name__)
+
 
 @cache(CACHE_TIMEOUT_IN_SECONDS)
 def get_movie_cast(movie_id):
     """
     Returns a list of cast members from tmdb
+    ordered by popularity
     or raises HTTPError
     """
     tmdb.API_KEY = settings.TMDB_API_KEY
     movie = tmdb.Movies(movie_id)
-    print('yoooooooo')
-    return movie.credits().get('cast', [])
+    credits = movie.credits().get('cast', [])
+
+    serializer = CastMemberSerializer(
+        data=order_by_popularity(credits), many=True)
+    serializer.is_valid(raise_exception=True)
+
+    return serializer.validated_data
 
 
 @cache(CACHE_TIMEOUT_IN_SECONDS)
 def get_persons_filmography(person_id):
     """
     Returns a list of movies from tmdb
+    ordered by popularity
     or raises HTTPError
     """
     tmdb.API_KEY = settings.TMDB_API_KEY
     person = tmdb.People(person_id)
-    return person.movie_credits().get('cast', [])
+    credits = person.movie_credits().get('cast', [])
+
+    serializer = MovieCreditSerializer(
+        data=order_by_popularity(credits), many=True)
+    serializer.is_valid(raise_exception=True)
+
+    return serializer.validated_data
+
+
+@cache(CACHE_TIMEOUT_IN_SECONDS)
+def get_movie_info(movie_id):
+    """
+    Returns info about a movie from tmdb
+    ordered by popularity
+    or raises HTTPError
+    """
+    tmdb.API_KEY = settings.TMDB_API_KEY
+    movie = tmdb.Movies(movie_id)
+
+    serializer = MovieCreditSerializer(
+        data=movie.info())
+    serializer.is_valid(raise_exception=True)
+
+    return serializer.validated_data
+
+
+@cache(CACHE_TIMEOUT_IN_SECONDS)
+def get_persons_info(person_id):
+    """
+    Returns info about a person from tmdb
+    or raises HTTPError
+    """
+    tmdb.API_KEY = settings.TMDB_API_KEY
+    person = tmdb.People(person_id)
+
+    serializer = CastMemberSerializer(
+        data=person.info())
+    serializer.is_valid(raise_exception=True)
+
+    return serializer.validated_data
 
 
 def api_exception_handler(exc, context):
@@ -55,3 +103,7 @@ def api_exception_handler(exc, context):
 
     # returns response as handled normally by the framework
     return response
+
+
+def order_by_popularity(items):
+    return sorted(items, key=lambda x: x['popularity'], reverse=True)
