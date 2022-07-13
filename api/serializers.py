@@ -1,6 +1,5 @@
-from django.contrib.auth.models import User, Group
-from api.models import Solution
 from rest_framework import serializers
+from api.models import Solution
 
 
 class CastMemberSerializer(serializers.Serializer):

@@ -10,6 +10,7 @@ def generate_token():
 class Puzzle(models.Model):
     start_movie_id = models.IntegerField(null=False, blank=False)
     end_movie_id = models.IntegerField(null=False, blank=False)
+    date_active = models.DateField(null=True, blank=True)
     object_created = models.DateTimeField(auto_now_add=True)
     object_modified = models.DateTimeField(auto_now=True)
 
@@ -20,11 +21,11 @@ class Solution(models.Model):
         Puzzle,
         on_delete=models.CASCADE,
         related_name='solutions',
-        related_query_name="solution", 
+        related_query_name='solution',
         blank=False,
         null=False,
     )
     solution = ArrayField(models.IntegerField(), unique=True)
+    count = models.IntegerField(default=1)
     object_created = models.DateTimeField(auto_now_add=True)
     object_modified = models.DateTimeField(auto_now=True)
-

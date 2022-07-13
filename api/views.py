@@ -1,6 +1,6 @@
 from api.serializers import SolutionSerializer
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.utils import get_movie_cast, get_persons_filmography, get_persons_info, get_movie_info, get_puzzle, get_solution
 
@@ -82,7 +82,7 @@ class SolutionAPI(APIView):
 
     def post(self, request):
         """
-        Init you puzzle by getting the start and end movie info.
+        Create or update a Solution with a given path
         """
         serializer = SolutionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
