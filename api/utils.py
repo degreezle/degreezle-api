@@ -1,9 +1,9 @@
 import logging
-from api.models import Puzzle, Solution
 
 import tmdbsimple as tmdb
 from requests.exceptions import HTTPError
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from cache_memoize import cache_memoize as cache
 from rest_framework import status
@@ -11,7 +11,7 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from api.serializers import CastMemberSerializer, MovieCreditSerializer, PuzzleSerializer, SolutionSerializer
+from api.serializers import CastMemberSerializer, MovieCreditSerializer, PuzzleSerializer
 from degreezle.settings import CACHE_TIMEOUT_IN_SECONDS
 
 logger = logging.getLogger(__name__)
@@ -87,6 +87,7 @@ def get_persons_info(person_id):
 
 
 def get_puzzle():
+    from api.models import Puzzle
     puzzle = Puzzle.objects.first()
 
     serializer = PuzzleSerializer(
@@ -101,6 +102,7 @@ def get_puzzle():
 
 
 def get_solution(token):
+    from api.models import Solution
     solution = Solution.objects.get(token=token)
     return {
         'token': solution.token,
@@ -118,7 +120,11 @@ def api_exception_handler(exc, context):
 
     if isinstance(exc, ValidationError):
         logger.warning('TMDB response returned unexpected format')
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if isinstance(exc, ObjectDoesNotExist):
+        logger.warning(f'DB ID Not Found')
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     if isinstance(exc, HTTPError):
         if exc.response.status_code == 404:
@@ -134,3 +140,4 @@ def api_exception_handler(exc, context):
 
 def order_by_popularity(items):
     return sorted(items, key=lambda x: x['popularity'], reverse=True)
+

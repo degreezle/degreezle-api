@@ -80,10 +80,11 @@ class SolutionAPI(APIView):
         """
         return Response(get_solution(token))
 
-    def post(self, request, token):
+    def post(self, request):
         """
         Init you puzzle by getting the start and end movie info.
         """
         serializer = SolutionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        return Response(serializer.data)

@@ -22,8 +22,4 @@ class SolutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Solution
         fields = ['token', 'puzzle', 'solution']
-        read_only_fields = ['token', 'puzzle']
-
-    def create(self, validated_data):
-        validated_data['token'] = Solution.generate_token()
-        super().create(validated_data)
+        read_only_fields = ['token']
