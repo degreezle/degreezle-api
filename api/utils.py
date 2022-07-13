@@ -1,4 +1,5 @@
 import logging
+from api.models import Puzzle, Solution
 
 import tmdbsimple as tmdb
 from requests.exceptions import HTTPError
@@ -10,7 +11,7 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from api.serializers import CastMemberSerializer, MovieCreditSerializer
+from api.serializers import CastMemberSerializer, MovieCreditSerializer, PuzzleSerializer, SolutionSerializer
 from degreezle.settings import CACHE_TIMEOUT_IN_SECONDS
 
 logger = logging.getLogger(__name__)
@@ -83,6 +84,32 @@ def get_persons_info(person_id):
     serializer.is_valid(raise_exception=True)
 
     return serializer.validated_data
+
+
+def get_puzzle():
+    puzzle = Puzzle.objects.first()
+
+    serializer = PuzzleSerializer(
+        data={
+            'id': puzzle.id,
+            'start_movie': get_movie_info(puzzle.start_movie_id),
+            'end_movie': get_movie_info(puzzle.end_movie_id)
+        })
+    serializer.is_valid(raise_exception=True)
+
+    return serializer.validated_data
+
+
+def get_solution(token):
+    solution = Solution.objects.get(token=token)
+    return {
+        'token': solution.token,
+        'puzzle': solution.puzzle.id,
+        'solution': [
+            get_movie_info(id) if index % 2 == 0 else get_persons_info(id)
+            for index, id in enumerate(solution.solution)
+        ]
+    }
 
 
 def api_exception_handler(exc, context):
