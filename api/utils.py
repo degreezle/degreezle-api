@@ -114,6 +114,16 @@ def get_solution(token):
     }
 
 
+def get_puzzle_metrics():
+    from api.models import Puzzle
+    puzzle = Puzzle.objects.first()
+    return {
+        'num_solved': puzzle.num_solved, 
+        'shortest_solution': puzzle.shortest_solution, 
+        'average_steps': puzzle.average_steps,
+        'median_steps': puzzle.median_steps,
+    }
+
 def api_exception_handler(exc, context):
     # Call REST framework's default exception handler first
     response = exception_handler(exc, context)

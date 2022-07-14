@@ -2,7 +2,7 @@ from api.serializers import SolutionSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.utils import get_movie_cast, get_persons_filmography, get_persons_info, get_movie_info, get_puzzle, get_solution
+from api.utils import get_movie_cast, get_persons_filmography, get_persons_info, get_movie_info, get_puzzle, get_puzzle_metrics, get_solution
 
 
 class MovieCrewAPI(APIView):
@@ -88,3 +88,15 @@ class SolutionAPI(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class MetricsAPI(APIView):
+    """
+    View metrics about the current puzzle.
+    """
+
+    def get(self, _):
+        """
+        Get the solution to a puzzle given a token.
+        """
+        return Response(get_puzzle_metrics())

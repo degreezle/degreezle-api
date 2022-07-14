@@ -16,24 +16,27 @@ class Puzzle(models.Model):
     object_created = models.DateTimeField(auto_now_add=True)
     object_modified = models.DateTimeField(auto_now=True)
 
+    @property
     def num_solved(self):
         return sum(self.solutions.values_list('count', flat=True))
 
+    @property
     def shortest_solution(self):
         return min(self.all_solution_lengths())
+
+    @property
+    def average_steps(self):
+        return np.mean(self.all_solution_lengths())
+
+    @property
+    def median_steps(self):
+        return np.median(self.all_solution_lengths())
 
     def all_solution_lengths(self):
         solution_lengths = []
         for solution in self.solutions.all():
             solution_lengths += [solution.num_degrees()] * solution.count
         return solution_lengths
-
-    def average_steps(self):
-        return np.mean(self.all_solution_lengths())
-
-    def median_steps(self):
-        return np.median(self.all_solution_lengths())
-
 
 class Solution(models.Model):
     token = models.CharField(max_length=100, default=generate_token, unique=True)
