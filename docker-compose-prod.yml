@@ -32,7 +32,7 @@ services:
     build: ./nginx-prod/
     volumes:
       - staticfiles:/app/static/
-      - ~/certs:/etc/ssl/certs
+      - ~/certs/:/etc/ssl/certs/
     ports:
       - 80:80
       - 443:443
