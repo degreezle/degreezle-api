@@ -80,7 +80,7 @@ class SolutionAPI(APIView):
         """
         return Response(get_solution(token))
 
-    def post(self, request, token):
+    def post(self, request):
         """
         Create or update a Solution with a given path
         """
