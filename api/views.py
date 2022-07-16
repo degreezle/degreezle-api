@@ -80,14 +80,19 @@ class SolutionAPI(APIView):
         """
         return Response(get_solution(token))
 
-    def post(self, request):
+    def post(self, request, token):
         """
         Create or update a Solution with a given path
         """
         serializer = SolutionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        solution = serializer.save()
+        return Response({
+            'puzzle': solution.puzzle.id,
+            'solution': solution.solution,
+            'token': solution.token,
+            'count': solution.count
+        })
 
 
 class MetricsAPI(APIView):
