@@ -20,6 +20,7 @@ services:
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
+      - staticfiles:/code/staticfiles
     expose:
       - 8000
     environment:
@@ -31,7 +32,7 @@ services:
   nginx:
     build: ./nginx/
     volumes:
-      - staticfiles:/app/static/
+      - staticfiles:/code/staticfiles/
     ports:
       - 80:80
       - 443:443
