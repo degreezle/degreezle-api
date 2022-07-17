@@ -57,16 +57,13 @@ class MovieInfoAPI(APIView):
         return Response(get_movie_info(movie_id))
 
 
-class InitPuzzleAPI(APIView):
+class PuzzleAPI(APIView):
     """
-    Init you puzzle by getting the start and end movie info.
+    Initialize a puzzle by getting first and last movies.
     """
 
-    def get(self, _):
-        """
-        Init you puzzle by getting the start and end movie info.
-        """
-        return Response(get_puzzle())
+    def get(self, _, puzzle_id=0):
+        return Response(get_puzzle(puzzle_id))
 
 
 class SolutionAPI(APIView):

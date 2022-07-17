@@ -12,6 +12,7 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
+from api.models import Puzzle, Solution
 from api.serializers import CrewMemberSerializer, MovieCreditSerializer, PuzzleSerializer
 from degreezle.settings import CACHE_TIMEOUT_IN_SECONDS
 
@@ -91,9 +92,11 @@ def get_persons_info(person_id):
     return serializer.validated_data
 
 
-def get_puzzle():
-    from api.models import Puzzle
-    puzzle = Puzzle.objects.first()
+def get_puzzle(puzzle_id):    
+    try:
+        puzzle = Puzzle.objects.get(pk=puzzle_id)
+    except Puzzle.DoesNotExist:
+        puzzle = Puzzle.objects.first()
 
     serializer = PuzzleSerializer(
         data={
@@ -107,7 +110,6 @@ def get_puzzle():
 
 
 def get_solution(token):
-    from api.models import Solution
     solution = Solution.objects.get(token=token)
     return {
         'token': solution.token,
@@ -121,7 +123,6 @@ def get_solution(token):
 
 
 def get_puzzle_metrics():
-    from api.models import Puzzle
     puzzle = Puzzle.objects.first()
     return {
         'num_solved': puzzle.num_solved, 
