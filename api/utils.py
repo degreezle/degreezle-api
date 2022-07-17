@@ -85,7 +85,7 @@ def get_persons_info(person_id):
     tmdb.API_KEY = settings.TMDB_API_KEY
     person = tmdb.People(person_id)
 
-    serializer = CastMemberSerializer(
+    serializer = CrewMemberSerializer(
         data=person.info())
     serializer.is_valid(raise_exception=True)
 
