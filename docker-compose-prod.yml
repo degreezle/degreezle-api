@@ -21,6 +21,7 @@ services:
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
+      - staticfiles:/code/staticfiles
     expose:
       - 8000
     environment:
