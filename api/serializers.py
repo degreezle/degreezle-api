@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models import Solution
 
 
-class CastMemberSerializer(serializers.Serializer):
+class CrewMemberSerializer(serializers.Serializer):
     name = serializers.CharField()
     profile_path = serializers.CharField(allow_null=True)
     id = serializers.IntegerField()
@@ -23,13 +23,12 @@ class SolutionSerializer(serializers.ModelSerializer):
     def save(self):
         puzzle = self.validated_data['puzzle']
         solution = self.validated_data['solution']
-        solution, created = Solution.objects.get_or_create(puzzle=puzzle, solution=solution)
-        if not created:
-            solution.count += 1
-            solution.save()
+        solution, _ = Solution.objects.get_or_create(puzzle=puzzle, solution=solution)
+        solution.count += 1
+        solution.save()
         return solution
 
     class Meta:
         model = Solution
-        fields = ['token', 'puzzle', 'solution', 'count']
-        read_only_fields = ['token', 'count']
+        fields = ['token', 'puzzle', 'solution', 'count', 'num_degrees']
+        read_only_fields = ['token', 'count', 'num_degrees']

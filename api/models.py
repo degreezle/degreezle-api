@@ -35,7 +35,7 @@ class Puzzle(models.Model):
     def all_solution_lengths(self):
         solution_lengths = []
         for solution in self.solutions.all():
-            solution_lengths += [solution.num_degrees()] * solution.count
+            solution_lengths += [solution.num_degrees] * solution.count
         return solution_lengths
 
 class Solution(models.Model):
@@ -49,9 +49,10 @@ class Solution(models.Model):
         null=False,
     )
     solution = ArrayField(models.IntegerField(), unique=True)
-    count = models.IntegerField(default=1)
+    count = models.IntegerField(default=0)
     object_created = models.DateTimeField(auto_now_add=True)
     object_modified = models.DateTimeField(auto_now=True)
 
+    @property
     def num_degrees(self):
         return len(self.solution) - 1

@@ -1,4 +1,5 @@
 import logging
+import toolz
 
 import tmdbsimple as tmdb
 from requests.exceptions import HTTPError
@@ -11,7 +12,7 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
-from api.serializers import CastMemberSerializer, MovieCreditSerializer, PuzzleSerializer
+from api.serializers import CrewMemberSerializer, MovieCreditSerializer, PuzzleSerializer
 from degreezle.settings import CACHE_TIMEOUT_IN_SECONDS
 
 logger = logging.getLogger(__name__)
@@ -26,10 +27,12 @@ def get_movie_cast(movie_id):
     """
     tmdb.API_KEY = settings.TMDB_API_KEY
     movie = tmdb.Movies(movie_id)
-    credits = movie.credits().get('cast', [])
+    credits = movie.credits()
+    cast = credits.get('cast', [])
+    crew = credits.get('crew', [])
+    credits = order_by_popularity_and_deduplicate(cast + crew)
 
-    serializer = CastMemberSerializer(
-        data=order_by_popularity(credits), many=True)
+    serializer = CrewMemberSerializer(data=credits, many=True)
     serializer.is_valid(raise_exception=True)
 
     return serializer.validated_data
@@ -44,10 +47,12 @@ def get_persons_filmography(person_id):
     """
     tmdb.API_KEY = settings.TMDB_API_KEY
     person = tmdb.People(person_id)
-    credits = person.movie_credits().get('cast', [])
+    credits = person.movie_credits()
+    cast = credits.get('cast', [])
+    crew = credits.get('crew', [])
+    credits = order_by_popularity_and_deduplicate(cast + crew)
 
-    serializer = MovieCreditSerializer(
-        data=order_by_popularity(credits), many=True)
+    serializer = MovieCreditSerializer(data=credits, many=True)
     serializer.is_valid(raise_exception=True)
 
     return serializer.validated_data
@@ -107,6 +112,7 @@ def get_solution(token):
     return {
         'token': solution.token,
         'puzzle': solution.puzzle.id,
+        'length': solution.num_degrees,
         'solution': [
             get_movie_info(id) if index % 2 == 0 else get_persons_info(id)
             for index, id in enumerate(solution.solution)
@@ -148,6 +154,7 @@ def api_exception_handler(exc, context):
     return response
 
 
-def order_by_popularity(items):
+def order_by_popularity_and_deduplicate(items):
+    items = toolz.unique(items, key=lambda x: x['id'])
     return sorted(items, key=lambda x: x['popularity'], reverse=True)
 
