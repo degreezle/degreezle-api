@@ -36,6 +36,9 @@ def get_movie_cast_and_crew(movie_id):
     serializer = CrewMemberSerializer(data=credits, many=True)
     serializer.is_valid(raise_exception=True)
 
+    for person_data in serializer.validated_data:
+        get_persons_info(person_data['id'], force_cache=person_data)
+
     return serializer.validated_data
 
 
@@ -56,16 +59,26 @@ def get_persons_filmography(person_id):
     serializer = MovieCreditSerializer(data=credits, many=True)
     serializer.is_valid(raise_exception=True)
 
+    for movie_data in serializer.validated_data:
+        get_movie_info(movie_data['id'], force_cache=movie_data)
+
     return serializer.validated_data
 
 
-@cache(CACHE_TIMEOUT_IN_SECONDS)
-def get_movie_info(movie_id):
+@cache(
+    CACHE_TIMEOUT_IN_SECONDS, 
+    # Allows force_cache to work
+    key_generator_callable=lambda *args, **kwargs: 'movie_info' + str(args[0])
+)
+def get_movie_info(movie_id, force_cache=None):
     """
     Returns info about a movie from tmdb
     ordered by popularity
     or raises HTTPError
     """
+    if force_cache:
+        return force_cache
+
     tmdb.API_KEY = settings.TMDB_API_KEY
     movie = tmdb.Movies(movie_id)
 
@@ -76,12 +89,19 @@ def get_movie_info(movie_id):
     return serializer.validated_data
 
 
-@cache(CACHE_TIMEOUT_IN_SECONDS)
-def get_persons_info(person_id):
+@cache(
+    CACHE_TIMEOUT_IN_SECONDS,
+    # Allows force_cache to work
+    key_generator_callable=lambda *args, **kwargs: 'persons_info' + str(args[0]), 
+)
+def get_persons_info(person_id, force_cache=None):
     """
     Returns info about a person from tmdb
     or raises HTTPError
     """
+    if force_cache:
+        return force_cache
+
     tmdb.API_KEY = settings.TMDB_API_KEY
     person = tmdb.People(person_id)
 
