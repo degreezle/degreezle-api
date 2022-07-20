@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 @cache(CACHE_TIMEOUT_IN_SECONDS)
-def get_movie_cast(movie_id):
+def get_movie_cast_and_crew(movie_id):
     """
     Returns a list of cast members from tmdb
     ordered by popularity

@@ -2,7 +2,15 @@ from api.serializers import SolutionSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.utils import get_movie_cast, get_persons_filmography, get_persons_info, get_movie_info, get_puzzle, get_puzzle_metrics, get_solution
+from api.utils import (
+    get_movie_cast_and_crew,
+    get_persons_filmography,
+    get_persons_info,
+    get_movie_info,
+    get_puzzle,
+    get_puzzle_metrics,
+    get_solution,
+)
 
 
 class MovieCrewAPI(APIView):
@@ -16,7 +24,7 @@ class MovieCrewAPI(APIView):
         Return a list of cast members for the movie on tmdb
         ordered by popularity.
         """
-        return Response(get_movie_cast(movie_id))
+        return Response(get_movie_cast_and_crew(movie_id))
 
 
 class FilmographyAPI(APIView):
