@@ -118,6 +118,7 @@ def get_persons_info(person_id, force_cache=None):
 def get_puzzle(request, puzzle_id = None):    
     try:
         puzzle = Puzzle.objects.get(pk=puzzle_id)
+        identified_local_datetime = None
     except Puzzle.DoesNotExist:
         try:
             identified_local_datetime = datetime.datetime.now(

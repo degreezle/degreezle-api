@@ -16,6 +16,7 @@ class PuzzleSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     start_movie = MovieCreditSerializer()
     end_movie = MovieCreditSerializer()
+    identified_local_datetime = serializers.DateTimeField(allow_null=True)
 
 class SolutionSerializer(serializers.ModelSerializer):
     solution = serializers.ListField(allow_empty=False, child=serializers.IntegerField(label='Solution'))
