@@ -208,7 +208,7 @@ def get_client_ip(request):
 
 def get_client_timezone(request):
     try:
-        timezone = GeoIP2().country(get_client_ip(request))['time_zone']
+        timezone = GeoIP2().city(get_client_ip(request))['time_zone']
     except:
         timezone = 'America/Los_Angeles'
     return timezone
