@@ -128,7 +128,7 @@ def get_puzzle(request, puzzle_id = None):
             identified_local_datetime = None
         finally:
             puzzle = Puzzle.objects.filter(
-                date_active=identified_local_datetime
+                date_active=identified_local_datetime.date()
             ).first()
 
     if not puzzle:
@@ -139,7 +139,7 @@ def get_puzzle(request, puzzle_id = None):
             'id': puzzle.id,
             'start_movie': get_movie_info(puzzle.start_movie_id),
             'end_movie': get_movie_info(puzzle.end_movie_id), 
-            'identified_local_datetime': identified_local_datetime, 
+            'identified_local_datetime': identified_local_datetime.astimezone(datetime.timezone.utc).strftime('%d-%m-%Y %H:%M:%S'), 
             'identified_local_timezone': get_client_timezone(request), 
             'ip': get_client_ip(request)
         })

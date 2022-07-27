@@ -16,7 +16,7 @@ class PuzzleSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     start_movie = MovieCreditSerializer()
     end_movie = MovieCreditSerializer()
-    identified_local_datetime = serializers.DateTimeField(allow_null=True)
+    identified_local_datetime = serializers.CharField(allow_null=True)
     identified_local_timezone = serializers.CharField()
     ip = serializers.CharField()
 
