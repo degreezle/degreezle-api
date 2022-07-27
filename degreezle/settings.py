@@ -173,3 +173,5 @@ CORS_ALLOWED_ORIGINS = [
     'https://degreezle-test.firebaseapp.com',
     'http://localhost:4200',
 ]
+
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoip2')

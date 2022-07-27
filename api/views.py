@@ -70,8 +70,8 @@ class PuzzleAPI(APIView):
     Initialize a puzzle by getting first and last movies.
     """
 
-    def get(self, _, puzzle_id=0):
-        return Response(get_puzzle(puzzle_id))
+    def get(self, request, puzzle_id = None):
+        return Response(get_puzzle(request, puzzle_id))
 
 
 class SolutionAPI(APIView):

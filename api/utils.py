@@ -1,10 +1,13 @@
 import logging
 import toolz
+import datetime
+import pytz
 
 import tmdbsimple as tmdb
 from requests.exceptions import HTTPError
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.gis.geoip2 import GeoIP2
 
 from cache_memoize import cache_memoize as cache
 from rest_framework import status
@@ -112,17 +115,30 @@ def get_persons_info(person_id, force_cache=None):
     return serializer.validated_data
 
 
-def get_puzzle(puzzle_id):    
+def get_puzzle(request, puzzle_id = None):    
     try:
         puzzle = Puzzle.objects.get(pk=puzzle_id)
     except Puzzle.DoesNotExist:
+        try:
+            identified_local_datetime = datetime.datetime.now(
+                pytz.timezone(get_client_timezone(request))
+            )
+        except:
+            identified_local_datetime = None
+        finally:
+            puzzle = Puzzle.objects.filter(
+                date_active=identified_local_datetime
+            ).first()
+
+    if not puzzle:
         puzzle = Puzzle.objects.first()
 
     serializer = PuzzleSerializer(
         data={
             'id': puzzle.id,
             'start_movie': get_movie_info(puzzle.start_movie_id),
-            'end_movie': get_movie_info(puzzle.end_movie_id)
+            'end_movie': get_movie_info(puzzle.end_movie_id), 
+            'identified_local_datetime': identified_local_datetime, 
         })
     serializer.is_valid(raise_exception=True)
 
@@ -179,3 +195,19 @@ def order_by_popularity_and_deduplicate(items):
     items = toolz.unique(items, key=lambda x: x['id'])
     return sorted(items, key=lambda x: x['popularity'], reverse=True)
 
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+def get_client_timezone(request):
+    try:
+        timezone = GeoIP2().country(get_client_ip(request))['time_zone']
+    except:
+        timezone = 'America/Los_Angeles'
+    return timezone
