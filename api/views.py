@@ -1,3 +1,4 @@
+from django.db import models
 from api.serializers import SolutionSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,6 +12,9 @@ from api.utils import (
     get_puzzle_metrics,
     get_solution,
 )
+
+class ArrayLength(models.Func):
+    function = 'CARDINALITY'
 
 
 class MovieCrewAPI(APIView):
@@ -92,11 +96,18 @@ class SolutionAPI(APIView):
         serializer = SolutionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         solution = serializer.save()
+
+        solutions_ordered_by_length = solution.puzzle.solutions.annotate(
+            solution_length=ArrayLength('solution')
+        ).order_by('solution_length')
+
         return Response({
             'puzzle': solution.puzzle.id,
             'solution': solution.solution,
             'token': solution.token,
-            'count': solution.count
+            'count': solution.count, 
+            'shortest_solution': solutions_ordered_by_length.first(),
+            'longest_solution': solutions_ordered_by_length.last(), 
         })
 
 
