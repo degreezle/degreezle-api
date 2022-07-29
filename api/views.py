@@ -106,8 +106,8 @@ class SolutionAPI(APIView):
             'solution': solution.solution,
             'token': solution.token,
             'count': solution.count, 
-            'shortest_solution': solutions_ordered_by_length.first(),
-            'longest_solution': solutions_ordered_by_length.last(), 
+            'shortest_solution': solutions_ordered_by_length.first().token,
+            'longest_solution': solutions_ordered_by_length.last().token, 
         })
 
 
