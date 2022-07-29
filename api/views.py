@@ -105,7 +105,7 @@ class SolutionAPI(APIView):
             'puzzle': solution.puzzle.id,
             'solution': solution.solution,
             'token': solution.token,
-            'count': solution.count, 
+            'count': solution.count - 1,
             'shortest_solution': solutions_ordered_by_length.first().token,
             'longest_solution': solutions_ordered_by_length.last().token, 
         })

@@ -165,7 +165,8 @@ def get_puzzle_metrics():
     puzzle = Puzzle.objects.first()
     return {
         'num_solved': puzzle.num_solved, 
-        'shortest_solution': puzzle.shortest_solution, 
+        'shortest_solution': puzzle.shortest_solution,
+        'longest_solution': puzzle.longest_solution,
         'average_steps': puzzle.average_steps,
         'median_steps': puzzle.median_steps,
     }

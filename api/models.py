@@ -25,6 +25,10 @@ class Puzzle(models.Model):
         return min(self.all_solution_lengths())
 
     @property
+    def longest_solution(self):
+        return max(self.all_solution_lengths())
+
+    @property
     def average_steps(self):
         return np.mean(self.all_solution_lengths())
 
