@@ -106,10 +106,10 @@ LOGGING = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_NAME'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': 'db',
+        'NAME': parser.get('database', 'POSTGRES_NAME', fallback='postgres'),
+        'USER': parser.get('database', 'POSTGRES_USER', fallback='postgres'),
+        'PASSWORD': parser.get('database', 'POSTGRES_PASSWORD', fallback='postgres'),
+        'HOST': parser.get('database', 'POSTGRES_HOST', fallback='db'),
         'PORT': 5432,
     }
 }
