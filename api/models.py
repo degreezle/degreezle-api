@@ -21,20 +21,32 @@ class Puzzle(models.Model):
         return sum(self.solutions.values_list('count', flat=True))
 
     @property
+    def num_solutions(self):
+        return self.solutions.count()
+
+    @property
     def shortest_solution(self):
-        return min(self.all_solution_lengths())
+        lengths = self.all_solution_lengths()
+        if lengths:
+            return min(lengths)
 
     @property
     def longest_solution(self):
-        return max(self.all_solution_lengths())
+        lengths = self.all_solution_lengths()
+        if lengths:
+            return max(lengths)
 
     @property
     def average_steps(self):
-        return np.mean(self.all_solution_lengths())
+        lengths = self.all_solution_lengths()
+        if lengths:
+            return np.mean(lengths)
 
     @property
     def median_steps(self):
-        return np.median(self.all_solution_lengths())
+        lengths = self.all_solution_lengths()
+        if lengths:
+            return np.median(lengths)
 
     def all_solution_lengths(self):
         solution_lengths = []
