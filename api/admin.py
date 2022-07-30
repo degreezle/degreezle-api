@@ -53,7 +53,7 @@ class PuzzleAdmin(admin.ModelAdmin):
         return '-'
 
     def link_to_solution_list(self, obj):
-        if obj.solution_set.exists():
+        if obj.solutions.exists():
             base_url = reverse('admin:api_solution_changelist')
             query_string = urlencode({'puzzle': obj.id})
             url = f'{base_url}?{query_string}'

@@ -71,4 +71,5 @@ class Solution(models.Model):
 
     @property
     def num_degrees(self):
-        return len(self.solution) - 1
+        if self.solution:
+            return len(self.solution) - 1
