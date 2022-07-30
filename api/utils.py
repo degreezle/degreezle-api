@@ -114,8 +114,7 @@ def get_persons_info(person_id, force_cache=None):
 
     return serializer.validated_data
 
-
-def get_puzzle(request, puzzle_id = None):    
+def find_puzzle_and_datetime(puzzle_id=None):
     try:
         puzzle = Puzzle.objects.get(pk=puzzle_id)
         identified_local_datetime = None
@@ -133,6 +132,11 @@ def get_puzzle(request, puzzle_id = None):
 
     if not puzzle:
         puzzle = Puzzle.objects.first()
+    return puzzle, identified_local_datetime
+
+
+def get_puzzle(request, puzzle_id=None):    
+    puzzle, identified_local_datetime = find_puzzle_and_datetime(puzzle_id)
 
     serializer = PuzzleSerializer(
         data={
@@ -162,7 +166,7 @@ def get_solution(token):
 
 
 def get_puzzle_metrics():
-    puzzle = Puzzle.objects.first()
+    puzzle, _ = find_puzzle_and_datetime()
     return {
         'num_solved': puzzle.num_solved, 
         'shortest_solution': puzzle.shortest_solution,
