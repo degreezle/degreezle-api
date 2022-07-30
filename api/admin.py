@@ -25,6 +25,7 @@ class PuzzleAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Films', {
             'fields': (
+                ('start_movie_id', 'end_movie_id'), 
                 ('link_to_first_film', 'link_to_last_film'),
             )
         }),
@@ -40,18 +41,24 @@ class PuzzleAdmin(admin.ModelAdmin):
     )
 
     def link_to_first_film(self, obj):
-        url = f'https://themoviedb.org/movie/{obj.start_movie_id}'
-        return mark_safe(f'<a href={url} target="_blank">{obj.start_movie_id}</a>')
+        if obj.start_movie_id:
+            url = f'https://themoviedb.org/movie/{obj.start_movie_id}'
+            return mark_safe(f'<a href={url} target="_blank">{obj.start_movie_id}</a>')
+        return '-'
 
     def link_to_last_film(self, obj):
-        url = f'https://themoviedb.org/movie/{obj.end_movie_id}'
-        return mark_safe(f'<a href={url} target="_blank">{obj.end_movie_id}</a>')
+        if obj.end_movie_id:
+            url = f'https://themoviedb.org/movie/{obj.end_movie_id}'
+            return mark_safe(f'<a href={url} target="_blank">{obj.end_movie_id}</a>')
+        return '-'
 
     def link_to_solution_list(self, obj):
-        base_url = reverse('admin:api_solution_changelist')
-        query_string = urlencode({'puzzle': obj.id})
-        url = f'{base_url}?{query_string}'
-        return mark_safe(f'<a href={url}>View solutions</a>')
+        if obj.solution_set.exists():
+            base_url = reverse('admin:api_solution_changelist')
+            query_string = urlencode({'puzzle': obj.id})
+            url = f'{base_url}?{query_string}'
+            return mark_safe(f'<a href={url}>View solutions</a>')
+        return '-'
 
 
 @admin.register(Solution)
@@ -66,7 +73,7 @@ class SolutionAdmin(admin.ModelAdmin):
     list_display = readonly_fields
     fieldsets = (
         ('Puzzle', {
-            'fields': ('puzzle_link', )
+            'fields': ('puzzle', 'puzzle_link')
         }),
         ('Solution', {
             'fields': (('count', 'num_degrees', 'solution'), ),
@@ -78,9 +85,13 @@ class SolutionAdmin(admin.ModelAdmin):
 
 
     def puzzle_link(self, obj):
-        url = reverse('admin:api_puzzle_change', args=(obj.puzzle.id, ))
-        return mark_safe(f'<a href={url}>{obj.puzzle}</a>')
+        if obj.puzzle:
+            url = reverse('admin:api_puzzle_change', args=(obj.puzzle.id, ))
+            return mark_safe(f'<a href={url}>{obj.puzzle}</a>')
+        return '-'
 
     def solution_view_link(self, obj):
-        url = f'https://degreezle-test.firebaseapp.com/solution/{obj.token}'
-        return mark_safe(f'<a href={url} target="_blank">View solution</a>')
+        if obj.id:
+            url = f'https://degreezle-test.firebaseapp.com/solution/{obj.token}'
+            return mark_safe(f'<a href={url} target="_blank">View solution</a>')
+        return '-'
