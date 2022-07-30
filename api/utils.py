@@ -143,9 +143,8 @@ def get_puzzle(request, puzzle_id=None):
             'id': puzzle.id,
             'start_movie': get_movie_info(puzzle.start_movie_id),
             'end_movie': get_movie_info(puzzle.end_movie_id), 
-            'identified_local_datetime': identified_local_datetime.strftime('%d-%m-%Y %H:%M:%S') if identified_local_datetime else None, 
-            'identified_local_timezone': get_client_timezone(request), 
-            'ip': get_client_ip(request)
+            'local_datetime': identified_local_datetime.strftime('%Y-%m-%d %H:%M:%S') if identified_local_datetime else None, 
+            'local_timezone': get_client_timezone(request), 
         })
     serializer.is_valid(raise_exception=True)
 
