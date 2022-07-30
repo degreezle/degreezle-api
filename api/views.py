@@ -116,8 +116,8 @@ class MetricsAPI(APIView):
     View metrics about the current puzzle.
     """
 
-    def get(self, _):
+    def get(self, request):
         """
         Get the solution to a puzzle given a token.
         """
-        return Response(get_puzzle_metrics())
+        return Response(get_puzzle_metrics(request))
