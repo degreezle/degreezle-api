@@ -1,16 +1,6 @@
 version: "3.3"
    
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
   web:
     build: .
     command: >
@@ -24,10 +14,6 @@ services:
       - staticfiles:/code/staticfiles
     expose:
       - 8000
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
     depends_on:
       - db
   nginx:
@@ -40,7 +26,6 @@ services:
       - 443:443
     depends_on:
       - web
-      - db
 
 volumes:
   staticfiles:
