@@ -60,7 +60,8 @@ class SolutionAdmin(admin.ModelAdmin):
         'id',
         'puzzle_link',
         'count',
-        'solution_view_link'
+        'solution_view_link',
+        'num_degrees',
     )
     list_display = readonly_fields
     fieldsets = (
@@ -68,7 +69,7 @@ class SolutionAdmin(admin.ModelAdmin):
             'fields': ('puzzle_link', )
         }),
         ('Solution', {
-            'fields': (('count', 'solution'), ),
+            'fields': (('count', 'num_degrees', 'solution'), ),
         }),
         ('Access', {
             'fields': (('token', 'solution_view_link'), )
