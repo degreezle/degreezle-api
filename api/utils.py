@@ -117,33 +117,33 @@ def get_persons_info(person_id, force_cache=None):
 def find_puzzle_and_datetime(request, puzzle_id=None):
     try:
         puzzle = Puzzle.objects.get(pk=puzzle_id)
-        identified_local_datetime = None
+        local_datetime = None
     except Puzzle.DoesNotExist:
         try:
-            identified_local_datetime = datetime.datetime.now(
+            local_datetime = datetime.datetime.now(
                 pytz.timezone(get_client_timezone(request))
             )
         except:
-            identified_local_datetime = None
+            local_datetime = None
         finally:
             puzzle = Puzzle.objects.filter(
-                date_active=identified_local_datetime.date()
+                date_active=local_datetime.date()
             ).first()
 
     if not puzzle:
         puzzle = Puzzle.objects.first()
-    return puzzle, identified_local_datetime
+    return puzzle, local_datetime
 
 
 def get_puzzle(request, puzzle_id=None):    
-    puzzle, identified_local_datetime = find_puzzle_and_datetime(request, puzzle_id)
+    puzzle, local_datetime = find_puzzle_and_datetime(request, puzzle_id)
 
     serializer = PuzzleSerializer(
         data={
             'id': puzzle.id,
             'start_movie': get_movie_info(puzzle.start_movie_id),
             'end_movie': get_movie_info(puzzle.end_movie_id), 
-            'local_datetime': identified_local_datetime.strftime('%Y-%m-%d %H:%M:%S') if identified_local_datetime else None, 
+            'local_datetime': local_datetime.strftime('%Y-%m-%d %H:%M:%S') if local_datetime else None, 
             'local_timezone': get_client_timezone(request), 
         })
     serializer.is_valid(raise_exception=True)
