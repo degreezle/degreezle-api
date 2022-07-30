@@ -14,8 +14,6 @@ services:
       - staticfiles:/code/staticfiles
     expose:
       - 8000
-    depends_on:
-      - db
   nginx:
     build: ./nginx-prod/
     volumes:
