@@ -16,6 +16,12 @@ class Puzzle(models.Model):
     object_created = models.DateTimeField(auto_now_add=True)
     object_modified = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        string = f'Puzzle #{self.id}'
+        if self.date_active:
+            string += self.date_active.strftime(": %Y%m%d")
+        return string
+
     @property
     def num_solved(self):
         return sum(self.solutions.values_list('count', flat=True))
