@@ -9,6 +9,7 @@ from api.utils import (
     get_movie_cast_and_crew,
     get_movie_info,
     get_persons_filmography,
+    get_persons_info,
     order_by_popularity_and_deduplicate,
 )
 
@@ -133,7 +134,9 @@ class Node:
             return path
 
 class PersonNode(Node):
-    def __init__(self, node_id, name, parent=None):
+    def __init__(self, node_id, name=None, parent=None):
+        if not name:
+            name = get_persons_info(node_id)['name']
         super().__init__(node_id, name, parent)
         self.type = Node.Type.PERSON
 
@@ -151,7 +154,9 @@ class PersonNode(Node):
         self.children = {FilmNode(c['id'], c['title'], self) for c in self.make_request()}
         
 class FilmNode(Node):
-    def __init__(self, node_id, name, parent=None):
+    def __init__(self, node_id, name=None, parent=None):
+        if not name:
+            name = get_movie_info(node_id)['title']
         super().__init__(node_id, name, parent)
         self.type = Node.Type.FILM
 
@@ -168,13 +173,14 @@ class FilmNode(Node):
     def populate_children(self):
         self.children = {PersonNode(c['id'], c['name'], self) for c in self.make_request()}
 
-def find_shortest_solution(start_id, end_id, save_to_db=False):
+def find_shortest_solution(start, end, save_to_db=False):
     """
-    Find the shortest route (given the role and popularity caveats above) between two films.
-    A quick test is Top Gun (#744) to Austin Powers: The Spy Who Shagged Me (#817).
+    Find the shortest route between two Nodes.
+    `start` and `end` attributes should be FilmNodes or PersonNodes.
+    A quick test is:
+     * FilmNode(744): Top Gun, to
+     * FilmNode(817): Austin Powers: The Spy Who Shagged Me
     """
-    start = FilmNode(start_id, get_movie_info(start_id)['title'])
-    end = FilmNode(end_id, get_movie_info(end_id)['title'])
     to_check = [start]
     checked = set()
     
@@ -189,8 +195,14 @@ def find_shortest_solution(start_id, end_id, save_to_db=False):
         print('.', end= ' ')
     
     if save_to_db:
-        puzzle = Puzzle.objects.create(start_movie_id=start_id, end_movie_id=end_id)
-        Solution.objects.create(puzzle=puzzle, solution=end.path_array([]))
+        puzzle, created = (
+            Puzzle.objects
+            .get_or_create(
+                start_movie_id=start.node_id, 
+                end_movie_id=end.node_id,
+            )
+        )
+        Solution.objects.get_or_create(puzzle=puzzle, solution=end.path_array([]))
     else:
         print()
         end.pprint([])
