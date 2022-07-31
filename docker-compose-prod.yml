@@ -12,6 +12,7 @@ services:
     volumes:
       - .:/code
       - staticfiles:/code/staticfiles
+      - /var/log:/var/log
     expose:
       - 8000
   nginx:
