@@ -28,11 +28,11 @@ class SolutionSerializer(serializers.ModelSerializer):
 
     def is_valid(self, raise_exceptions=False):
         from api.utils import get_movie_cast_and_crew, get_persons_filmography
-
+        valid = super().is_valid(raise_exceptions)
         solution = self.validated_data['solution']
         for i, step in enumerate(solution):
             if i + 1 == len(solution):
-                return True
+                return True and valid
 
             if i % 2 == 0:
                 ids = [c['id'] for c in get_movie_cast_and_crew(step)]
