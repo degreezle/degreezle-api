@@ -200,7 +200,7 @@ def api_exception_handler(exc, context):
 
 def order_by_popularity_and_deduplicate(items):
     items = toolz.unique(items, key=lambda x: x['id'])
-    return sorted(items, key=lambda x: x['popularity'], reverse=True)
+    return sorted(items, key=lambda x: x.get('popularity', 0), reverse=True)
 
 
 def get_client_ip(request):

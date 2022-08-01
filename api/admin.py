@@ -39,6 +39,7 @@ class PuzzleAdmin(admin.ModelAdmin):
             )
         })
     )
+    ordering = ('-date_active', )
 
     def link_to_first_film(self, obj):
         if obj.start_movie_id:
@@ -83,6 +84,7 @@ class SolutionAdmin(admin.ModelAdmin):
         }),
     )
 
+    list_filter = ('puzzle', )
 
     def puzzle_link(self, obj):
         if obj.puzzle:
