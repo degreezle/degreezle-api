@@ -187,6 +187,7 @@ CACHES = {
 
 CORS_ALLOWED_ORIGINS = [
     'https://degreezle-test.firebaseapp.com',
+    'https://filminthega.ps',
     'http://localhost:4200',
 ]
 
