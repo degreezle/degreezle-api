@@ -94,6 +94,6 @@ class SolutionAdmin(admin.ModelAdmin):
 
     def solution_view_link(self, obj):
         if obj.id:
-            url = f'https://degreezle-test.firebaseapp.com/solution/{obj.token}'
+            url = f'https://filminthega.ps/solution/{obj.token}'
             return mark_safe(f'<a href={url} target="_blank">View solution</a>')
         return '-'
