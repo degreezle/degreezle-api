@@ -11,6 +11,7 @@ urlpatterns = [
     path(r'puzzle/<int:puzzle_id>/', views.PuzzleAPI.as_view()),
     path(r'solution/', views.SolutionAPI.as_view()),
     path(r'solution/<str:token>/', views.SolutionAPI.as_view()),
+    path(r'metrics/puzzle/', views.PuzzleMetricsAPI.as_view()),
     path(r'metrics/puzzle/<int:puzzle_id>/', views.PuzzleMetricsAPI.as_view()),
     path(r'metrics/solution/<str:token>/', views.SolutionMetricsAPI.as_view()),
 ]
