@@ -198,6 +198,7 @@ def get_solution_metrics(token):
         'shortest_solution_token': solutions_ordered_by_length.first().token,
         'longest_solution_token': solutions_ordered_by_length.last().token,
         'count': solution.count - 1,
+        'num_steps':  solution.num_degrees,
         'num_solved': puzzle.num_solved,
         'average_steps': puzzle.average_steps,
         'median_steps': puzzle.median_steps,
