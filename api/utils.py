@@ -194,7 +194,7 @@ def get_solution_metrics(token):
     return {
         'token': solution.token,
         'shortest_solution_steps': solutions_ordered_by_length.first().num_degrees,
-        'longest_solution_steps': solutions_ordered_by_length.last().num_degree,
+        'longest_solution_steps': solutions_ordered_by_length.last().num_degrees,
         'shortest_solution_token': solutions_ordered_by_length.first().token,
         'longest_solution_token': solutions_ordered_by_length.last().token,
         'count': solution.count - 1,
