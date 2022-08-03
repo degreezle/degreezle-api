@@ -1,4 +1,3 @@
-from django.db import models
 from api.serializers import SolutionSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -111,7 +110,7 @@ class PuzzleMetricsAPI(APIView):
         """
         Get the solution to a puzzle given a token.
         """
-        return Response(get_puzzle_metrics(request))
+        return Response(get_puzzle_metrics(request, puzzle_id))
 
 
 class SolutionMetricsAPI(APIView):

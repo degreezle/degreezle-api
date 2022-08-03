@@ -1,5 +1,4 @@
 import logging
-from api.views import ArrayLength
 import toolz
 import datetime
 import pytz
@@ -9,6 +8,7 @@ from requests.exceptions import HTTPError
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.gis.geoip2 import GeoIP2
+from django.db import models
 
 from cache_memoize import cache_memoize as cache
 from rest_framework import status
