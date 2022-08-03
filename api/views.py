@@ -15,10 +15,6 @@ from api.utils import (
 )
 
 
-class ArrayLength(models.Func):
-    function = 'CARDINALITY'
-
-
 class MovieCrewAPI(APIView):
     """
     View to list all cast members for the movie on tmdb

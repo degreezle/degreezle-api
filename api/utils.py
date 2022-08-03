@@ -23,6 +23,10 @@ from degreezle.settings import CACHE_TIMEOUT_IN_SECONDS
 logger = logging.getLogger(__name__)
 
 
+class ArrayLength(models.Func):
+    function = 'CARDINALITY'
+
+
 @cache(CACHE_TIMEOUT_IN_SECONDS)
 def get_movie_cast_and_crew(movie_id):
     """
