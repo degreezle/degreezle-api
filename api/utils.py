@@ -174,6 +174,7 @@ def get_solution(token):
 def get_puzzle_metrics(request, puzzle_id=None):
     puzzle, _ = find_puzzle_and_datetime(request, puzzle_id)
     return {
+        'id': puzzle.id,
         'num_solved': puzzle.num_solved,
         'shortest_solution': puzzle.shortest_solution,
         'longest_solution': puzzle.longest_solution,
@@ -191,6 +192,7 @@ def get_solution_metrics(token):
     ).order_by('solution_length')
 
     return {
+        'token': solution.token,
         'shortest_solution_steps': solutions_ordered_by_length.first().num_degrees,
         'longest_solution_steps': solutions_ordered_by_length.last().num_degree,
         'shortest_solution_token': solutions_ordered_by_length.first().token,
