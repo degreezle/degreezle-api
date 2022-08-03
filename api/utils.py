@@ -1,4 +1,5 @@
 import logging
+from api.views import ArrayLength
 import toolz
 import datetime
 import pytz
@@ -69,7 +70,7 @@ def get_persons_filmography(person_id):
 
 
 @cache(
-    CACHE_TIMEOUT_IN_SECONDS, 
+    CACHE_TIMEOUT_IN_SECONDS,
     # Allows force_cache to work
     key_generator_callable=lambda *args, **kwargs: 'movie_info' + str(args[0])
 )
@@ -95,7 +96,8 @@ def get_movie_info(movie_id, force_cache=None):
 @cache(
     CACHE_TIMEOUT_IN_SECONDS,
     # Allows force_cache to work
-    key_generator_callable=lambda *args, **kwargs: 'persons_info' + str(args[0]), 
+    key_generator_callable=lambda *args, **kwargs: 'persons_info' + \
+    str(args[0]),
 )
 def get_persons_info(person_id, force_cache=None):
     """
@@ -113,6 +115,7 @@ def get_persons_info(person_id, force_cache=None):
     serializer.is_valid(raise_exception=True)
 
     return serializer.validated_data
+
 
 def find_puzzle_and_datetime(request, puzzle_id=None):
     try:
@@ -135,16 +138,16 @@ def find_puzzle_and_datetime(request, puzzle_id=None):
     return puzzle, local_datetime
 
 
-def get_puzzle(request, puzzle_id=None):    
+def get_puzzle(request, puzzle_id=None):
     puzzle, local_datetime = find_puzzle_and_datetime(request, puzzle_id)
 
     serializer = PuzzleSerializer(
         data={
             'id': puzzle.id,
             'start_movie': get_movie_info(puzzle.start_movie_id),
-            'end_movie': get_movie_info(puzzle.end_movie_id), 
-            'local_datetime': local_datetime.strftime('%Y-%m-%d %H:%M:%S') if local_datetime else None, 
-            'local_timezone': get_client_timezone(request), 
+            'end_movie': get_movie_info(puzzle.end_movie_id),
+            'local_datetime': local_datetime.strftime('%Y-%m-%d %H:%M:%S') if local_datetime else None,
+            'local_timezone': get_client_timezone(request),
         })
     serializer.is_valid(raise_exception=True)
 
@@ -164,15 +167,36 @@ def get_solution(token):
     }
 
 
-def get_puzzle_metrics(request):
-    puzzle, _ = find_puzzle_and_datetime(request)
+def get_puzzle_metrics(request, puzzle_id=None):
+    puzzle, _ = find_puzzle_and_datetime(request, puzzle_id)
     return {
-        'num_solved': puzzle.num_solved, 
+        'num_solved': puzzle.num_solved,
         'shortest_solution': puzzle.shortest_solution,
         'longest_solution': puzzle.longest_solution,
         'average_steps': puzzle.average_steps,
         'median_steps': puzzle.median_steps,
     }
+
+
+def get_solution_metrics(token):
+    solution = Solution.objects.get(token=token)
+    puzzle = solution.puzzle
+
+    solutions_ordered_by_length = solution.puzzle.solutions.annotate(
+        solution_length=ArrayLength('solution')
+    ).order_by('solution_length')
+
+    return {
+        'shortest_solution_steps': solutions_ordered_by_length.first().num_degrees,
+        'longest_solution_steps': solutions_ordered_by_length.last().num_degree,
+        'shortest_solution_token': solutions_ordered_by_length.first().token,
+        'longest_solution_token': solutions_ordered_by_length.last().token,
+        'count': solution.count - 1,
+        'num_solved': puzzle.num_solved,
+        'average_steps': puzzle.average_steps,
+        'median_steps': puzzle.median_steps,
+    }
+
 
 def api_exception_handler(exc, context):
     # Call REST framework's default exception handler first
