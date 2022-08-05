@@ -123,22 +123,23 @@ def get_persons_info(person_id, force_cache=None):
 
 def find_puzzle_and_datetime(request, puzzle_id=None):
     try:
-        puzzle = Puzzle.objects.get(pk=puzzle_id)
-        local_datetime = None
-    except Puzzle.DoesNotExist:
-        try:
-            local_datetime = datetime.datetime.now(
-                pytz.timezone(get_client_timezone(request))
-            )
-        except:
-            local_datetime = None
-        finally:
-            puzzle = Puzzle.objects.filter(
-                date_active=local_datetime.date()
-            ).first()
+        local_datetime = datetime.datetime.now(
+            pytz.timezone(get_client_timezone(request))
+        )
+    except:
+        local_datetime = datetime.datetime.now()
+    finally:
+        puzzles_available = Puzzle.objects.filter(
+            date_active__lte=local_datetime.date() 
+        )
+    
+    if puzzle_id:
+        puzzle = puzzles_available.get(pk=puzzle_id)
+    else:
+        puzzle = puzzles_available.filter(
+            date_active=local_datetime.date()
+        ).first()
 
-    if not puzzle:
-        puzzle = Puzzle.objects.first()
     return puzzle, local_datetime
 
 
