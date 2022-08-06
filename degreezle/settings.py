@@ -191,4 +191,9 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
 ]
 
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    # Github actions created URLs
+    r"^https://.+\.web\.app$",
+]
+
 GEOIP_PATH = os.path.join(BASE_DIR, 'geoip2')
