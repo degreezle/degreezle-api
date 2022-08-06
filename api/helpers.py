@@ -133,6 +133,11 @@ class Node:
             path.reverse()
             return path
 
+    def get_depth(self):
+        if not self.parent:
+            return 0
+        return self.parent.get_depth() + 1
+
 class PersonNode(Node):
     def __init__(self, node_id, name=None, parent=None):
         if not name:
@@ -192,6 +197,9 @@ def find_shortest_solution(start, end, save_to_db=False):
         if end in to_check:
             end = [node for node in to_check if node == end][0]
             break
+        elif current_node.get_depth() == 6:
+            failed_to_find = True
+            break
         print('.', end= ' ')
     
     if save_to_db:
@@ -203,6 +211,8 @@ def find_shortest_solution(start, end, save_to_db=False):
             )
         )
         Solution.objects.get_or_create(puzzle=puzzle, solution=end.path_array([]))
+    elif failed_to_find:
+        print('Failed to find a solution in 6 or fewer steps.')
     else:
         print()
         end.pprint([])
