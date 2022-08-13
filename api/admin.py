@@ -59,6 +59,9 @@ class PuzzleAdmin(admin.ModelAdmin):
             query_string = urlencode({'puzzle': obj.id})
             url = f'{base_url}?{query_string}'
             return mark_safe(f'<a href={url}>View solutions</a>')
+        elif obj.id:
+            url = reverse('admin:api_solution_add')
+            return mark_safe(f'<a href={url}>Add a solution</a>')
         return '-'
 
 
