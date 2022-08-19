@@ -187,6 +187,7 @@ def find_shortest_solution(start, end, save_to_db=False):
      * FilmNode(817): Austin Powers: The Spy Who Shagged Me
     """
     to_check = [start]
+    failed_to_find = False    
     checked = set()
     
     while to_check:

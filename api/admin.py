@@ -59,9 +59,12 @@ class PuzzleAdmin(admin.ModelAdmin):
             query_string = urlencode({'puzzle': obj.id})
             url = f'{base_url}?{query_string}'
             return mark_safe(f'<a href={url}>View solutions</a>')
-        elif obj.id:
+        elif all([getattr(obj, i) for i in ('id', 'start_movie_id', 'end_movie_id')]):
             base_url = reverse('admin:api_solution_add')
-            query_string = urlencode({'puzzle': obj.id})
+            query_string = urlencode({
+                'puzzle': obj.id,
+                'solution': f'{obj.start_movie_id},{obj.end_movie_id}',
+            })
             url = f'{base_url}?{query_string}'
             return mark_safe(f'<a href={url}>Add a solution</a>')
         return '-'
