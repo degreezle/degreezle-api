@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from api.models import Puzzle, Solution
-from api.serializers import CrewMemberSerializer, MovieCreditSerializer, PuzzleSerializer
+from api.serializers import CrewMemberSerializer, HistoricalPuzzleSerializer, MovieCreditSerializer, PuzzleSerializer
 from degreezle.settings import CACHE_TIMEOUT_IN_SECONDS
 
 logger = logging.getLogger(__name__)
@@ -147,12 +147,12 @@ def find_puzzle_and_datetime(request, puzzle_id=None):
 
 
 def get_all_available_puzzles(request):
-    puzzles = find_puzzles_available(request)
+    puzzles, _ = find_puzzles_available(request)
 
-    serializer = PuzzleSerializer(
+    serializer = HistoricalPuzzleSerializer(
         data=[{
             'id': puzzle.id,
-            'datetime': puzzle.date_active,
+            'datetime': puzzle.date_active.isoformat(),
         } for puzzle in puzzles],
         many=True
     )

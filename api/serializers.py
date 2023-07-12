@@ -23,6 +23,10 @@ class PuzzleSerializer(serializers.Serializer):
     local_timezone = serializers.CharField()
 
 
+class HistoricalPuzzleSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    datetime = serializers.CharField()
+
 class SolutionSerializer(serializers.ModelSerializer):
     solution = serializers.ListField(
         allow_empty=False, child=serializers.IntegerField(label='Solution'))
