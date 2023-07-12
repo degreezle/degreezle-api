@@ -121,7 +121,7 @@ def get_persons_info(person_id, force_cache=None):
     return serializer.validated_data
 
 
-def find_puzzle_and_datetime(request, puzzle_id=None):
+def find_puzzles_available(request):
     try:
         local_datetime = datetime.datetime.now(
             pytz.timezone(get_client_timezone(request))
@@ -130,17 +130,35 @@ def find_puzzle_and_datetime(request, puzzle_id=None):
         local_datetime = datetime.datetime.now()
     finally:
         puzzles_available = Puzzle.objects.filter(
-            date_active__lte=local_datetime.date() 
-        )
-    
+            date_active__lte=local_datetime.date()
+        ).order_by('-date_active')
+    return puzzles_available, local_datetime
+
+
+def find_puzzle_and_datetime(request, puzzle_id=None):
+    puzzles_available, local_datetime = find_puzzles_available(request)
+
     if puzzle_id:
         puzzle = puzzles_available.get(pk=puzzle_id)
     else:
-        puzzle = puzzles_available.filter(
-            date_active=local_datetime.date()
-        ).first()
+        puzzle = puzzles_available.first()
 
     return puzzle, local_datetime
+
+
+def get_all_available_puzzles(request):
+    puzzles = find_puzzles_available(request)
+
+    serializer = PuzzleSerializer(
+        data=[{
+            'id': puzzle.id,
+            'datetime': puzzle.date_active,
+        } for puzzle in puzzles],
+        many=True
+    )
+    serializer.is_valid(raise_exception=True)
+
+    return serializer.validated_data
 
 
 def get_puzzle(request, puzzle_id=None):

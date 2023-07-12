@@ -11,6 +11,7 @@ from api.utils import (
     get_puzzle_metrics,
     get_solution,
     get_solution_metrics,
+    get_all_available_puzzles,
 )
 
 
@@ -99,6 +100,18 @@ class SolutionAPI(APIView):
             'solution': solution.solution,
             'token': solution.token,
         })
+
+
+class HistoricalPuzzleAPI(APIView):
+    """
+    View historical puzzles and their dates.
+    """
+
+    def get(self, request):
+        """
+        Get the solution to a puzzle given a token.
+        """
+        return Response(get_all_available_puzzles(request))
 
 
 class PuzzleMetricsAPI(APIView):
