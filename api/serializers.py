@@ -28,13 +28,17 @@ class HistoricalPuzzleSerializer(serializers.Serializer):
 
 class SolutionSerializer(serializers.ModelSerializer):
     solution = serializers.ListField(
-        allow_empty=False, child=serializers.IntegerField(label='Solution'))
+        allow_empty=False,
+        child=serializers.IntegerField(label='Solution'),
+    )
 
     def save(self):
         puzzle = self.validated_data['puzzle']
         solution = self.validated_data['solution']
         solution, _ = Solution.objects.get_or_create(
-            puzzle=puzzle, solution=solution)
+            puzzle=puzzle,
+            solution=solution,
+        )
         solution.count += 1
         solution.save()
         return solution

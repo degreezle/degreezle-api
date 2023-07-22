@@ -150,11 +150,13 @@ def get_all_available_puzzles(request):
     puzzles, _ = find_puzzles_available(request)
 
     serializer = HistoricalPuzzleSerializer(
-        data=[{
-            'id': puzzle.id,
-            'datetime': puzzle.date_active.isoformat(),
-        } for puzzle in puzzles],
-        many=True
+        data=[
+            {
+                'id': puzzle.id,
+                'datetime': puzzle.date_active.isoformat(),
+            } for puzzle in puzzles
+        ],
+        many=True,
     )
     serializer.is_valid(raise_exception=True)
 
