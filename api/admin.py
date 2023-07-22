@@ -78,6 +78,7 @@ class SolutionAdmin(admin.ModelAdmin):
         'count',
         'solution_view_link',
         'num_degrees',
+        'object_created',
     )
     list_display = readonly_fields
     fieldsets = (
