@@ -173,6 +173,7 @@ def get_puzzle(request, puzzle_id=None):
             'end_movie': get_movie_info(puzzle.end_movie_id),
             'local_datetime': local_datetime.strftime('%Y-%m-%d %H:%M:%S') if local_datetime else None,
             'local_timezone': get_client_timezone(request),
+            'author': puzzle.author,
         })
     serializer.is_valid(raise_exception=True)
 

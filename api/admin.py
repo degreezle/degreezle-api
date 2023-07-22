@@ -29,8 +29,8 @@ class PuzzleAdmin(admin.ModelAdmin):
                 ('link_to_first_film', 'link_to_last_film'),
             )
         }),
-        ('Date active', {
-            'fields': ('date_active', )
+        ('Metadata', {
+            'fields': (('date_active', 'author'), )
         }),
         ('Metrics', {
             'fields': (
