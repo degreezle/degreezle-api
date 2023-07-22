@@ -178,7 +178,7 @@ class FilmNode(Node):
     def populate_children(self):
         self.children = {PersonNode(c['id'], c['name'], self) for c in self.make_request()}
 
-def find_shortest_solution(start, end, save_to_db=False):
+def find_shortest_solution(start, end, max_depth=6, save_to_db=False):
     """
     Find the shortest route between two Nodes.
     `start` and `end` attributes should be FilmNodes or PersonNodes.
@@ -198,7 +198,7 @@ def find_shortest_solution(start, end, save_to_db=False):
         if end in to_check:
             end = [node for node in to_check if node == end][0]
             break
-        elif current_node.get_depth() == 6:
+        elif current_node.get_depth() > max_depth:
             failed_to_find = True
             break
         print('.', end= ' ')
@@ -213,7 +213,7 @@ def find_shortest_solution(start, end, save_to_db=False):
         )
         Solution.objects.get_or_create(puzzle=puzzle, solution=end.path_array([]))
     elif failed_to_find:
-        print('Failed to find a solution in 6 or fewer steps.')
+        print(f'Failed to find a solution in {max_depth} or fewer steps.')
     else:
         print()
         end.pprint([])
