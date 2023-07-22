@@ -8,6 +8,7 @@ urlpatterns = [
     path(r'person/<int:person_id>/filmography/',
          views.FilmographyAPI.as_view()),
     path(r'puzzle/', views.PuzzleAPI.as_view()),
+    path(r'puzzle/historical/', views.HistoricalPuzzleAPI.as_view()),
     path(r'puzzle/<int:puzzle_id>/', views.PuzzleAPI.as_view()),
     path(r'solution/', views.SolutionAPI.as_view()),
     path(r'solution/<str:token>/', views.SolutionAPI.as_view()),
