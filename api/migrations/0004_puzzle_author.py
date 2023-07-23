@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='puzzle',
             name='author',
-            field=models.CharField(blank=True, max_length=64),
+            field=models.CharField(blank=True, max_length=64, null=True),
         ),
     ]
