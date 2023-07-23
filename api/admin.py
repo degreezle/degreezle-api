@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from datetime import timedelta
 from urllib.parse import urlencode
 
 from api.models import Puzzle, Solution
@@ -40,6 +41,18 @@ class PuzzleAdmin(admin.ModelAdmin):
         })
     )
     ordering = ('-date_active', )
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(PuzzleAdmin, self).get_form(request, obj, **kwargs)
+        prev = (
+            Puzzle.objects
+            .filter(date_active__isnull=False)
+            .order_by('date_active')
+            .last()
+        )
+        form.base_fields['start_movie_id'].initial = prev.end_movie_id
+        form.base_fields['date_active'].initial = prev.date_active + timedelta(days=1)
+        return form
 
     def link_to_first_film(self, obj):
         if obj.start_movie_id:
