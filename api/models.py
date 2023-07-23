@@ -15,6 +15,7 @@ class Puzzle(models.Model):
     date_active = models.DateField(null=True, blank=True)
     object_created = models.DateTimeField(auto_now_add=True)
     object_modified = models.DateTimeField(auto_now=True)
+    author = models.CharField(max_length=64, blank=True, null=True)
 
     def __str__(self):
         string = f'Puzzle #{self.id}'
