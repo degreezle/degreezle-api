@@ -20,7 +20,7 @@ class PuzzleSerializer(serializers.Serializer):
     end_movie = MovieCreditSerializer()
     local_datetime = serializers.CharField(allow_null=True)
     local_timezone = serializers.CharField()
-    author = serializers.CharField(allow_blank=True)
+    author = serializers.CharField(allow_blank=True, allow_null=True)
 
 
 class HistoricalPuzzleSerializer(serializers.Serializer):
